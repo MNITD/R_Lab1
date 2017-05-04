@@ -116,9 +116,13 @@ print("---------------------")
 
 # Task 4
 
-n <- 20 # sample
+#  Central Limit Theorem for the discrete random variables
+
+n_arr <- c(5,10,20) # sample
 N <- 1000 # experiments
-k <- 0+1+2 # for id 012
+k <- 3 # <- 0+1+2 for id 012
+
+for(n in n_arr){
 
 start_time <- Sys.time() 
 
@@ -182,13 +186,105 @@ for (i in 1:200){
 # 9) displaying normal distribution and empirical distribution on the graph 
 # ---------------------
 
-plot(coords, Fn,  col = "blue", main = NA)
-plot(Fe, col = "red", add = T)
+plot(coords, Fn, type="l", col = "blue", lwd=2,
+     main = "Theoretical CDF and empirical CDF",
+     ylab ="CDF", xlab="Argument")
+lines(coords,Fe(coords), type ="s", col = "red", lwd=2)
+legend(title = 'Results','topleft',
+     c('theoretical', 'empirical'),
+     col=c('blue', 'red'),
+     lwd=2,
+     lty=1,
+     bg = 'lightblue')
 
+print(sprintf("sample n: %d", n))
 print(sprintf("max difference: %f", max(d)))
 end_time <- Sys.time()
 print(end_time - start_time)
 print("---------------------")
+}
 
+# Task 5
+
+#   Central Limit Theorem for the continuous random variables
+
+n_arr <- c(5,10,20) # sample
+N <- 1000 # experiments
+k <- 3 # <- 0+1+2 for id 012
+lambda = 12/10 # parameter of exponential distribution
+
+for(n in n_arr){
+
+start_time <- Sys.time() 
+ 
+# ---------------------
+# 1) getting vector of means 
+# ---------------------
+v <- rep(0, N) # define vector of means
+for(i in 1:N){                                                                      
+   v[i] <- mean(rexp(n=n, lambda))
+}
+
+# ---------------------
+# 2) getting mean from vector of means
+# ---------------------
+
+mean_v <- mean(v) # mean
+
+# ---------------------
+# 3) getting standard deviation from vector of means
+# ---------------------
+
+sigma <- sd(v) # standard deviation
+
+# ---------------------
+# 4) generating of sequence of 200 coordinates in interval from mean_v - (3 * sigma) to mean_v + (3 * sigma)
+# ---------------------
+
+coords <- seq(mean_v - (3 * sigma) , mean_v + (3 * sigma), length.out = 200) 
+
+# ---------------------
+# 5) getting normal distribution 
+# ---------------------
+
+Fn <- pnorm(coords, mean = mean_v , sd = sigma)
+
+# ---------------------
+# 6) getting empirical distribution function
+# ---------------------
+
+Fe <- ecdf(v)      
+
+# ---------------------
+# 7) creating array of differences 
+# ---------------------
+
+d <- 0 # array of different values
+
+for (i in 1:200){ 
+    d[i] <- abs(Fn[i] - Fe(coords[i]))
+}
+
+# ---------------------
+# 8) displaying normal distribution and empirical distribution on the graph 
+# ---------------------
+
+plot(coords, Fn, type="l", col = "blue", lwd=2,
+     main = "Theoretical CDF and empirical CDF",
+     ylab ="CDF", xlab="Argument")
+lines(coords,Fe(coords), type ="s", col = "red", lwd=2)
+legend(title = 'Results','topleft',
+     c('theoretical', 'empirical'),
+     col=c('blue', 'red'),
+     lwd=2,
+     lty=1,
+     bg = 'lightblue')
+
+print(sprintf("sample n: %d", n))
+print(sprintf("max difference: %f", max(d)))
+end_time <- Sys.time()
+print(end_time - start_time)
+print("---------------------")
+}
 
 
